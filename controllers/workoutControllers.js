@@ -1,5 +1,6 @@
 const Workout = require("../models/workoutModel");
 const mongoose = require("mongoose");
+const { response } = require("express");
 
 // get all workouts
 const getWorkouts = async (req, res) => {
@@ -30,6 +31,24 @@ const getWorkout = async (req, res) => {
 // create new workout
 const createWorkout = async (req, res) => {
   const { title, load, reps } = req.body;
+
+  let emptyFields = [];
+
+  if (!title) {
+    emptyFields.push("title");
+  }
+  if (!load) {
+    emptyFields.push("load");
+  }
+  if (!reps) {
+    emptyFields.push("reps");
+  }
+
+  if (emptyFields.length > 0) {
+    return res
+      .status(400)
+      .json({ err: "Please fill in all the fields", emptyFields });
+  }
 
   // add doc to db
   try {
